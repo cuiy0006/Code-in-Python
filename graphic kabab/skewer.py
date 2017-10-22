@@ -1,9 +1,3 @@
-"""
-A module for representing the skewer functionality.
-
-Author: Sean Strout @ RITCS
-"""
-
 from food import Food
 from kebab_graphics import SkewerUI
 from kebab_spot import KebabSpot
