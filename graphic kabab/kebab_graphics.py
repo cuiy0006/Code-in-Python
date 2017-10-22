@@ -1,10 +1,3 @@
-"""
-Everything needed to do the graphical Shish Kebab.  This is a fully object
-oriented class with a constructor and methods, utilizing the 'self' concept
-for the instance name.
-
-Author: Sean Strout @ RIT CS
-"""
 from graphics import GraphWin, Line, Point, Circle, Rectangle
 
 # This dictionary maps food items (string), to colors (string)
