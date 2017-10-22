@@ -1,8 +1,3 @@
-"""
-A module that represents "spots" on the skewer.
-
-Author: Sean Strout @ RITCS
-"""
 from food import Food
 
 class KebabSpot:
