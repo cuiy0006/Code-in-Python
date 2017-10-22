@@ -1,9 +1,3 @@
-"""
-A module that represents the valid food types.
-
-Author: Sean Strout @ RITCS
-"""
-
 # The set of valid food items
 FOODS = {'beef', 'pork', 'chicken', 'onion', 'pepper', 'tomato','mushroom'}
 
