@@ -1,10 +1,3 @@
-"""
-A module containing the exception class for things that can go wrong while
-working with the skewer.
-
-Author: Sean Strout @ RITCS
-"""
-
 class SkewerException(Exception):
     """
     Class: SkewerException
