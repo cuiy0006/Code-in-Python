@@ -1,9 +1,3 @@
-"""
-The main module for running the Shish Kebab program.
-
-Author: Sean Strout @ RITCS
-"""
-
 import sys
 from food import FOODS
 from skewer import Skewer
