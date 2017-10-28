@@ -1,0 +1,77 @@
+from numba import jit
+import time
+X_START = -4
+X_END = 4
+Y_START = -4
+Y_END = 4
+
+@jit
+def func(x, y):
+    return x ** 2 + y ** 2
+
+#not available for numba
+# def green_comparer(m,n):
+#     return m<n
+
+# def yellow_comparer(m,n):
+#     return m<=n
+
+# def color(step, comparer):
+#     volume = 0
+#     y = Y_START + step
+#     area = step * step
+#     while comparer(y, Y_END):
+#         x = X_START + step
+#         while comparer(x, X_END):
+#             volume += area * func(x, y)
+#             x += step
+#         y += step
+#     return volume
+
+@jit
+def green(step):
+    #from -4 + step to 4 - step
+    volume = 0
+    y = Y_START + step
+    area = step * step
+    while y < Y_END:
+        x = X_START + step
+        while x < X_END:
+            volume += area * func(x, y)
+            x += step
+        y += step
+    return volume
+
+@jit
+def yellow(step):
+    #from -4 + step to 4
+    volume = 0
+    y = Y_START + step
+    area = step * step
+    while y <= Y_END:
+        x = X_START + step
+        while x <= X_END:
+            volume += area * func(x, y)
+            x += step
+        y += step
+    return volume
+
+
+if __name__ == '__main__':
+    start = time.time()
+    step1 = 2
+    step2 = 1
+    while True:
+        green_area = green(step1)
+        yellow_area = yellow(step2)
+        if abs(green_area - yellow_area) <= 0.0001:
+            print('green area: ', green_area)
+            print('yellow area: ', yellow_area)
+            print('diff: ', green_area - yellow_area)
+            print('current step1: ', step1)
+            print('current step2: ', step2)
+            break
+        else:
+            step1 = step1 / 10
+            step2 = step2 / 10
+    print(time.time() - start)
