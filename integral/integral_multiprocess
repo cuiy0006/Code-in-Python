@@ -1,0 +1,70 @@
+import time
+from multiprocessing import Manager, Pool
+X_START = -4
+X_END = 4
+Y_START = -4
+Y_END = 4
+NPROCESS = 4
+def func(x, y):
+    return x ** 2 + y ** 2
+
+def green_comparer(m,n):
+    return m<n
+def yellow_comparer(m,n):
+    return m<=n
+
+def consumer(input_q, output_q, step, status, comparer):
+    while True:
+        y = input_q.get()
+        if y == 'None':
+            status.set()
+        volume = 0
+        area = step * step
+        x = X_START + step
+        while comparer(x, X_END):
+            volume += area * func(x, y)
+            x += step
+        output_q.put(volume)
+
+def color(step, comparer):
+    m = Manager()
+    input_q = m.Queue()
+    output_q = m.Queue()
+    status = m.Event()
+
+    p = Pool(NPROCESS)
+    for i in range(NPROCESS):
+        p.apply_async(consumer, (input_q, output_q, step, status, comparer))
+    y = Y_START + step
+    while comparer(y, Y_END):
+        input_q.put(y)
+        y += step
+    input_q.put('None')
+    p.close()
+
+    status.wait()
+
+    p.terminate()
+    volume = 0
+    while not output_q.empty():
+        volume += output_q.get()
+    return volume
+
+if __name__ == '__main__':
+    start = time.time()
+    step1 = 2
+    step2 = 1
+    while True:
+        green_area = color(step1, green_comparer)
+        yellow_area = color(step2, yellow_comparer)
+        if abs(green_area - yellow_area) <= 0.0001:
+            print('green area: ', green_area)
+            print('yellow area: ', yellow_area)
+            print('diff: ', green_area - yellow_area)
+            print('current step1: ', step1)
+            print('current step2: ', step2)
+            break
+        else:
+            step1 = step1 / 10
+            step2 = step2 / 10
+    print(time.time() - start)
