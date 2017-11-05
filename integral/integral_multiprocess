@@ -18,6 +18,7 @@ def consumer(input_q, output_q, step, status, comparer):
         y = input_q.get()
         if y == 'None':
             status.set()
+            continue
         volume = 0
         area = step * step
         x = X_START + step
