@@ -43,11 +43,20 @@ def get(path):
     except socket.error:
         pass
 
+    if path == '/foo':
+        print('connecting<-foo')
+    else:
+        print('connecting<-bar')
+
     f = Future()
     file_no = s.fileno()
     selector.register(file_no, EVENT_WRITE, f)
     yield f
     selector.unregister(file_no)
+    if path == '/foo':
+        print('listening<-foo')
+    else:
+        print('listening<-bar')
 
     message = 'GET %s HTTP/1.0\r\n\r\n' % path
     s.send(message.encode('utf-8'))
@@ -59,6 +68,10 @@ def get(path):
     while True:
         yield f
         chunk = s.recv(1000)
+        if path == '/foo':
+            print('reading<-foo')
+        else:
+            print('reading<-bar')
         if chunk:
             buf.append(chunk.decode('utf-8'))
         else:
@@ -73,6 +86,7 @@ def get(path):
 
 start = timer()
 Task(get('/foo'))
+Task(get('/bar'))
 while n_jobs:
     events = selector.select()
     for key, mask in events:
