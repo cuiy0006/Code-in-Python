@@ -9,7 +9,7 @@ QueueManager.register('get_task_queue')
 QueueManager.register('get_result_queue')
 
 def test():
-    server_addr = '192.168.1.3'
+    server_addr = '192.168.1.100'
     print('connect to server %s...' %server_addr)
 
     manager = QueueManager(address=(server_addr, 20000), authkey=b'abc')

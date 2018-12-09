@@ -22,7 +22,7 @@ def test():
     QueueManager.register('get_task_queue', callable=return_task_queue)
     QueueManager.register('get_result_queue', callable=return_result_queue)
 
-    manager = QueueManager(address=('192.168.1.3', 20000), authkey=b'abc')
+    manager = QueueManager(address=('192.168.1.100', 20000), authkey=b'abc')
 
     manager.start()
 
@@ -30,7 +30,7 @@ def test():
     result = manager.get_result_queue()
 
     for i in range(10):
-        n = random.randint(0, 10000)
+        n = random.randint(0, 10)
         print('Put task %d...' % n)
         task.put(n)
 
@@ -43,6 +43,6 @@ def test():
     print('master exit.')
 
 if __name__ == '__main__':
-    freeze_support()
+    #freeze_support()
     test()
 
