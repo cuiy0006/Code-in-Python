@@ -1,7 +1,9 @@
 import time
 from multiprocessing.managers import BaseManager
 import asyncio
+import threading
 from threading import Thread
+import aiohttp
 
 
 def start_loop(loop):
@@ -9,20 +11,23 @@ def start_loop(loop):
     loop.run_forever()
 
 
-async def do_sleep(x, queue):
-    await asyncio.sleep(x)
-    queue.put(str(x) + " is done")
-    print(x, " is done")
+async def fetch(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            print(resp.status)
+            return await resp.text()
 
 
-def consumer(loop):
-    while True:
-        task = task_queue.get()
-        if not task:
-            time.sleep(1)
-            continue
-        asyncio.run_coroutine_threadsafe(do_sleep(int(task), result_queue), loop)
-
+async def do_some_work(url):
+    print('waiting...', url)
+    print('current thread:', threading.current_thread())
+    try:
+        ret = await fetch(url)
+        result_queue.put(ret)
+    except Exception as e:
+        print(e)
+    else:
+        print('{} ... done'.format(url))
 
 BaseManager.register('get_task_queue')
 BaseManager.register('get_result_queue')
@@ -42,10 +47,10 @@ loop_thread = Thread(target=start_loop, args=(new_loop,))
 loop_thread.setDaemon(True)
 loop_thread.start()
 
-
-consumer_thread = Thread(target=consumer, args=(new_loop,))
-consumer_thread.setDaemon(True)
-consumer_thread.start()
-
 while True:
-    time.sleep(1)
+    task = task_queue.get()
+    if not task:
+        time.sleep(1)
+        continue
+    asyncio.run_coroutine_threadsafe(do_some_work(task), new_loop)
+
